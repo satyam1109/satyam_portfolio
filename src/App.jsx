@@ -78,7 +78,7 @@ const personalProjects = [
 ]
 
 const profiles = [
-  { number: '01', name: 'LinkedIn', handle: '/in/im-satyam', href: 'https://www.linkedin.com/in/im-satyam', status: 'Connect' },
+  { number: '01', name: 'LinkedIn', handle: '/in/im-satyam', href: 'https://www.linkedin.com/in/im-satyam', status: 'Connect', previewImage: '/linkedin-profile-preview.png' },
   { number: '02', name: 'GitHub', handle: '@satyam1109', href: 'https://github.com/satyam1109', status: 'Explore code' },
   { number: '03', name: 'LeetCode', handle: '@satyam_ror__', href: 'https://leetcode.com/u/satyam_ror__/', status: 'Solve with me' },
   { number: '04', name: 'Medium', handle: '@satyamror1109', href: 'https://medium.com/@satyamror1109', status: 'Read my writing' },
@@ -88,6 +88,21 @@ const articles = [
   { number: '01', topic: 'Distributed systems', title: 'Making event streams reliable with the transactional outbox pattern', read: 'Draft in progress' },
   { number: '02', topic: 'Backend performance', title: 'What database partitioning taught me about designing for scale', read: 'Notes in progress' },
   { number: '03', topic: 'AI engineering', title: 'Building semantic product search with pgvector and local embeddings', read: 'Case study soon' },
+]
+
+const recognitions = [
+  {
+    year: '2025',
+    title: 'Spotlight of the Month',
+    image: '/spotlight-of-the-month-2025.png',
+    alt: 'GlobalLogic Spotlight of the Month certificate awarded to Satyam Singh in October 2025',
+  },
+  {
+    year: '2024',
+    title: 'Marvel Award',
+    image: '/marvel-award-2024.png',
+    alt: 'GlobalLogic Marvel Award certificate awarded to Satyam Singh in November 2024',
+  },
 ]
 
 function MatrixRain() {
@@ -174,6 +189,7 @@ function App() {
   const [activeSection, setActiveSection] = useState('top')
   const [scrollProgress, setScrollProgress] = useState(0)
   const [heroProgress, setHeroProgress] = useState(0)
+  const [activeCertificate, setActiveCertificate] = useState(null)
 
   useEffect(() => {
     const tick = () => setTime(new Intl.DateTimeFormat('en-GB', {
@@ -207,6 +223,22 @@ function App() {
     }
   }, [])
 
+  useEffect(() => {
+    if (!activeCertificate) return undefined
+
+    const previousOverflow = document.body.style.overflow
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setActiveCertificate(null)
+    }
+
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', closeOnEscape)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [activeCertificate])
+
   const closeMenu = () => setMenuOpen(false)
 
   const illuminateGrid = (event) => {
@@ -228,16 +260,23 @@ function App() {
     event.currentTarget.style.setProperty('--portrait-y', '0px')
   }
 
+  const descriptionProgress = Math.min(1, Math.max(0, (heroProgress - 0.72) / 0.28))
+  const portraitExitProgress = Math.min(1, Math.max(0, (heroProgress - 0.86) / 0.14))
+
   const heroMotion = {
     '--hero-progress': heroProgress,
-    '--hero-clip': `${heroProgress * 68}%`,
-    '--hero-divider': `${52 + heroProgress * 32}%`,
+    '--hero-clip': `${heroProgress * 100}%`,
+    '--hero-divider': `${52 + heroProgress * 48}%`,
     '--hero-shift': `${heroProgress * 13}vw`,
-    '--hero-copy-width': `${52 + heroProgress * 32}vw`,
+    '--hero-copy-width': `${52 + heroProgress * 48}vw`,
     '--hero-second-indent': `${9 - heroProgress * 9}vw`,
     '--hero-eyebrow-opacity': 1 - heroProgress * 0.82,
     '--hero-chrome-opacity': 1 - heroProgress,
-    '--hero-description-opacity': 0.35 + heroProgress * 0.65,
+    '--hero-description-opacity': descriptionProgress,
+    '--hero-description-y': `${(1 - descriptionProgress) * 42}px`,
+    '--hero-description-blur': `${(1 - descriptionProgress) * 8}px`,
+    '--hero-description-events': descriptionProgress > 0.15 ? 'auto' : 'none',
+    '--hero-portrait-opacity': 1 - portraitExitProgress,
   }
 
   const submitForm = async (event) => {
@@ -337,8 +376,21 @@ function App() {
             </Reveal>
             <Reveal className="recognition" delay={140}>
               <p className="eyebrow">RECOGNITION.LOG</p>
-              <div><span>2025</span><p>SpotLight of the Month</p></div>
-              <div><span>2024</span><p>Marvel Award</p></div>
+              {recognitions.map((recognition) => (
+                <div className="recognition-entry" key={recognition.title}>
+                  <span className="recognition-year">{recognition.year}</span>
+                  <p>{recognition.title}</p>
+                  <button
+                    className="certificate-thumb"
+                    type="button"
+                    onClick={() => setActiveCertificate(recognition)}
+                    aria-label={`View ${recognition.title} certificate`}
+                  >
+                    <img src={recognition.image} alt="" loading="lazy" />
+                    <span>VIEW</span>
+                  </button>
+                </div>
+              ))}
             </Reveal>
           </div>
           <Reveal className="experience-metrics">
@@ -431,7 +483,8 @@ function App() {
                 const Tag = profile.href ? 'a' : 'div'
                 return (
                   <Reveal key={profile.name} delay={index * 70}>
-                    <Tag className={`profile-row ${!profile.href ? 'disabled' : ''}`} href={profile.href || undefined} target={profile.href ? '_blank' : undefined} rel="noreferrer">
+                    <Tag className={`profile-row ${!profile.href ? 'disabled' : ''} ${profile.previewImage ? 'has-preview' : ''}`} href={profile.href || undefined} target={profile.href ? '_blank' : undefined} rel="noreferrer">
+                      {profile.previewImage && <img className="profile-preview-image" src={profile.previewImage} alt="" aria-hidden="true" />}
                       <span className="profile-number">{profile.number}</span>
                       <h3>{profile.name}</h3>
                       <div className="profile-copy"><p>{profile.handle}</p><span>{profile.status}</span></div>
@@ -494,6 +547,19 @@ function App() {
           </div>
         </section>
       </main>
+
+      {activeCertificate && (
+        <div className="certificate-lightbox" role="dialog" aria-modal="true" aria-label={`${activeCertificate.title} certificate`} onClick={() => setActiveCertificate(null)}>
+          <div className="certificate-dialog" onClick={(event) => event.stopPropagation()}>
+            <div className="certificate-dialog-head">
+              <div><span>{activeCertificate.year}</span><p>{activeCertificate.title}</p></div>
+              <button type="button" onClick={() => setActiveCertificate(null)} aria-label="Close certificate preview" autoFocus>×</button>
+            </div>
+            <img src={activeCertificate.image} alt={activeCertificate.alt} />
+            <p className="certificate-hint">CLICK OUTSIDE OR PRESS ESC TO CLOSE</p>
+          </div>
+        </div>
+      )}
 
       <aside className="section-rail" aria-hidden="true">
         <span>{activeSection === 'top' ? '01' : String(['experience', 'builds', 'skills', 'profiles', 'writing', 'contact'].indexOf(activeSection) + 2).padStart(2, '0')}</span>
