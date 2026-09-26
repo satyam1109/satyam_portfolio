@@ -33,7 +33,7 @@ const professionalProjects = [
     number: '01',
     type: 'Enterprise platform',
     title: 'BuilMirai',
-    summary: 'Backend systems for Hitachi’s smart building management platform—designed for volume, reliability and near-real-time events.',
+    summary: 'Built REST APIs for smart-building operations, improved API response times by up to 60% through PostgreSQL partitioning, and moved event publishing to Debezium CDC with a transactional outbox.',
     work: [
       'Developed Spring Boot microservices and REST APIs for building operations and management workflows.',
       'Designed database partitioning for high-volume datasets, reducing API response times by up to 60%.',
@@ -47,14 +47,14 @@ const professionalProjects = [
     number: '02',
     type: 'Legacy modernization',
     title: 'QAD Adaptive ERP',
-    summary: 'Modernizing Progress 4GL business logic into Java services for a platform used by 500+ global manufacturers.',
+    summary: 'Migrated Progress 4GL workflows to Java and Spring Boot across EDI, Sales, Service and Inventory, developing backend functionality for 20+ ERP screens.',
     work: [
       'Contributed to modernizing QAD Adaptive ERP by migrating legacy Progress 4GL functionality to Java and Spring Boot.',
-      'Analyzed legacy business logic and developed backend services for EDI, Sales, Service and Inventory modules.',
+      'Developed backend functionality for 20+ ERP screens across EDI, Sales, Service and Inventory modules.',
       'Maintained functional parity while moving critical workflows into a modern service architecture.',
-      'Resolved 50+ production and pre-production defects through cross-module root-cause analysis.',
+      'Diagnosed production and pre-production defects through cross-module root-cause analysis, contributing to 100+ resolutions across QAD and BuilMirai.',
     ],
-    impact: '500+ enterprise clients',
+    impact: '20+ ERP screens developed',
     stack: ['Java', 'Spring Boot', 'REST APIs', 'Progress 4GL', 'QAD ERP', 'EDI', 'SQL'],
   },
 ]
@@ -84,10 +84,11 @@ const profiles = [
   { number: '04', name: 'Medium', handle: '@satyamror1109', href: 'https://medium.com/@satyamror1109', status: 'Read my writing' },
 ]
 
-const articles = [
-  { number: '01', topic: 'Distributed systems', title: 'Making event streams reliable with the transactional outbox pattern', read: 'Draft in progress' },
-  { number: '02', topic: 'Backend performance', title: 'What database partitioning taught me about designing for scale', read: 'Notes in progress' },
-  { number: '03', topic: 'AI engineering', title: 'Building semantic product search with pgvector and local embeddings', read: 'Case study soon' },
+const impactStats = [
+  { label: 'Production API latency', value: '15s → 2s', qualifier: 'Over 15s → up to 2s', detail: 'Optimized database views, indexes and existing code flows.', featured: true },
+  { label: 'API performance', value: '60%', qualifier: 'Up to 60% faster', detail: 'PostgreSQL partitioning for high-volume datasets in BuilMirai.' },
+  { label: 'Production reliability', value: '100+', qualifier: 'Defects resolved', detail: 'Production and pre-production issues across QAD and BuilMirai.' },
+  { label: 'ERP development', value: '20+', qualifier: 'ERP screens', detail: 'Backend functionality built with Java and Spring Boot for QAD Adaptive ERP.' },
 ]
 
 const recognitions = [
@@ -201,7 +202,7 @@ function App() {
   }, [])
 
   useEffect(() => {
-    const sectionIds = ['experience', 'builds', 'skills', 'profiles', 'writing', 'contact']
+    const sectionIds = ['impact', 'experience', 'builds', 'skills', 'profiles', 'writing', 'contact']
     const updateScrollState = () => {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight
       setScrollProgress(maxScroll > 0 ? window.scrollY / maxScroll : 0)
@@ -260,11 +261,19 @@ function App() {
     event.currentTarget.style.setProperty('--portrait-y', '0px')
   }
 
-  const descriptionProgress = Math.min(1, Math.max(0, (heroProgress - 0.72) / 0.28))
+  const easeStage = (start, end) => {
+    const progress = Math.min(1, Math.max(0, (heroProgress - start) / (end - start)))
+    return progress * progress * (3 - 2 * progress)
+  }
+  const descriptionProgress = easeStage(0.72, 1)
   const portraitExitProgress = Math.min(1, Math.max(0, (heroProgress - 0.86) / 0.14))
 
   const heroMotion = {
     '--hero-progress': heroProgress,
+    '--opening-opacity': 1 - easeStage(0.12, 0.52),
+    '--opening-y': `${easeStage(0.12, 0.52) * -36}px`,
+    '--intro-name-opacity': easeStage(0.45, 0.78),
+    '--intro-name-y': `${(1 - easeStage(0.45, 0.78)) * 36}px`,
     '--hero-clip': `${heroProgress * 100}%`,
     '--hero-divider': `${52 + heroProgress * 48}%`,
     '--hero-shift': `${heroProgress * 13}vw`,
@@ -322,15 +331,15 @@ function App() {
       <main>
         <section className="hero" id="top" style={heroMotion} onPointerMove={shiftPortrait} onPointerLeave={resetPortrait}>
           <div className="hero-stage">
-            <div className="hero-copy">
+            <div className="hero-opening" aria-hidden="true">
               <p className="eyebrow hero-eyebrow"><span>SYS.01</span> SOFTWARE × DESIGN × SYSTEMS</p>
-              <h1 aria-label="Satyam Singh">
-                <span className="hero-name first">SATYAM</span>
-                <span className="hero-name second">SINGH</span>
-              </h1>
-              <div className="hero-description">
-                <p>Software engineer and designer building reliable systems, intelligent products and thoughtful digital experiences.</p>
-                <a className="circle-link" href="#experience" aria-label="Explore experience and selected work"><Arrow /></a>
+              <p className="opening-name"><span>I am</span><span>Satyam</span></p>
+            </div>
+            <div className="hero-introduction">
+              <h1>Satyam Singh</h1>
+              <div className="hero-intro-description">
+                <p>Software Engineer with 2.8 years of experience at GlobalLogic, building reliable backend systems with Java, Spring Boot, microservices and REST APIs. Experienced in enterprise modernization, PostgreSQL optimization, Kafka and Debezium CDC, with additional frontend experience in React.</p>
+                <a className="circle-link" href="#impact" tabIndex={descriptionProgress > 0.95 ? 0 : -1} aria-label="Explore selected impact"><Arrow /></a>
               </div>
             </div>
 
@@ -353,15 +362,24 @@ function App() {
           </div>
         </section>
 
-        <div className="signal-marquee" aria-hidden="true">
-          <div>
-            <span>SOFTWARE ENGINEER</span><i>◆</i><span>DISTRIBUTED SYSTEMS</span><i>◆</i><span>PRODUCT THINKING</span><i>◆</i><span>INTERFACE DESIGN</span><i>◆</i>
-            <span>SOFTWARE ENGINEER</span><i>◆</i><span>DISTRIBUTED SYSTEMS</span><i>◆</i><span>PRODUCT THINKING</span><i>◆</i><span>INTERFACE DESIGN</span><i>◆</i>
+        <section className="impact-section section-pad dark-surface" id="impact" onPointerMove={illuminateGrid} aria-labelledby="impact-title">
+          <Reveal className="section-kicker"><span>02</span><p>Highlights</p></Reveal>
+          <Reveal className="impact-heading"><h2 id="impact-title">Selected <em>impact.</em></h2><p>Faster APIs. Reliable services.<br />Work that makes a measurable difference.</p></Reveal>
+          <div className="impact-grid">
+            {impactStats.map((stat, index) => (
+              <Reveal className={`impact-card ${stat.featured ? 'impact-featured' : ''}`} key={stat.label} delay={index * 90}>
+                <p className="eyebrow">{stat.label}</p>
+                <strong>{stat.value}</strong>
+                <h3>{stat.qualifier}</h3>
+                <p className="impact-detail">{stat.detail}</p>
+                <span className="impact-marker" aria-hidden="true">0{index + 1}</span>
+              </Reveal>
+            ))}
           </div>
-        </div>
+        </section>
 
         <section className="work experience section-pad dark-surface" id="experience" onPointerMove={illuminateGrid}>
-          <Reveal className="section-kicker"><span>02</span><p>Experience / Recognition</p></Reveal>
+          <Reveal className="section-kicker"><span>03</span><p>Experience / Recognition</p></Reveal>
           <div className="experience-grid experience-lead">
             <Reveal className="timeline">
               <div className="timeline-line" />
@@ -371,11 +389,12 @@ function App() {
                 <div className="company-identity">
                   <img src="/globallogic-logo.png" alt="GlobalLogic, a Hitachi Group Company" />
                 </div>
-                <p>Building Spring Boot microservices, distributed data systems and enterprise modernization solutions from Bengaluru, India.</p>
+                <p>Software Engineer with 2.8 years of experience in Java, Spring Boot, microservices and REST APIs. My work spans QAD’s ERP modernization and Hitachi’s BuilMirai platform, with hands-on experience in PostgreSQL, Kafka and Debezium CDC.</p>
+                <p className="availability-note">Serving notice period · Open to Java Backend and Full Stack roles.</p>
               </article>
             </Reveal>
             <Reveal className="recognition" delay={140}>
-              <p className="eyebrow">RECOGNITION.LOG</p>
+              <p className="eyebrow">Recognition</p>
               {recognitions.map((recognition) => (
                 <div className="recognition-entry" key={recognition.title}>
                   <span className="recognition-year">{recognition.year}</span>
@@ -393,14 +412,9 @@ function App() {
               ))}
             </Reveal>
           </div>
-          <Reveal className="experience-metrics">
-            <div><strong>60%</strong><span>API response-time reduction</span></div>
-            <div><strong>500+</strong><span>Global manufacturing clients</span></div>
-            <div><strong>50+</strong><span>Production defects resolved</span></div>
-          </Reveal>
           <Reveal className="role-projects-heading">
             <span>PROJECTS WITHIN THIS ROLE</span>
-            <p>Selected systems and modernization work delivered as part of my current role.</p>
+            <p>Building APIs, modernizing legacy workflows and improving the systems people use every day.</p>
           </Reveal>
           <div className="project-list">
             {professionalProjects.map((project, index) => (
@@ -432,7 +446,7 @@ function App() {
         </section>
 
         <section className="personal section-pad dark-surface" id="builds" onPointerMove={illuminateGrid}>
-          <Reveal className="section-kicker"><span>03</span><p>Personal Builds</p></Reveal>
+          <Reveal className="section-kicker"><span>04</span><p>Personal Builds</p></Reveal>
           <Reveal className="project-section-heading personal-heading">
             <h2>Personal<br /><em>projects.</em></h2>
             <p>Products and technical experiments built independently—from intelligent search and local AI to full-stack product systems.</p>
@@ -448,16 +462,11 @@ function App() {
                 <div className="personal-footer"><span>{project.impact}</span><div>{project.stack.map(item => <span key={item}>{item}</span>)}</div></div>
               </Reveal>
             ))}
-            <Reveal className="project-slots" delay={120}>
-              <div><span>02</span><p>Next personal build</p><em>Reserved</em></div>
-              <div><span>03</span><p>Experimental project</p><em>Reserved</em></div>
-              <p className="slot-note">This collection will grow with open-source work, experiments and products outside my professional role.</p>
-            </Reveal>
           </div>
         </section>
 
         <section className="skills section-pad dark-surface" id="skills" onPointerMove={illuminateGrid}>
-          <Reveal className="section-kicker"><span>04</span><p>Technology / Categorized Toolkit</p></Reveal>
+          <Reveal className="section-kicker"><span>05</span><p>Technical toolkit</p></Reveal>
           <div className="skill-groups">
             {skillGroups.map((group, index) => (
               <Reveal className="skill-group" key={group.title} delay={index * 70}>
@@ -472,7 +481,7 @@ function App() {
         </section>
 
         <section className="profiles section-pad dark-surface" id="profiles" onPointerMove={illuminateGrid}>
-          <Reveal className="section-kicker"><span>05</span><p>Elsewhere / Developer Profiles</p></Reveal>
+          <Reveal className="section-kicker"><span>06</span><p>Find me across</p></Reveal>
           <div className="profile-layout">
             <Reveal className="profile-intro">
               <h2 className="profiles-title">Find me<br /><em>in the wild.</em></h2>
@@ -498,28 +507,19 @@ function App() {
         </section>
 
         <section className="writing section-pad dark-surface" id="writing" onPointerMove={illuminateGrid}>
-          <Reveal className="section-kicker"><span>06</span><p>Writing / Engineering Notes</p></Reveal>
+          <Reveal className="section-kicker"><span>07</span><p>Writing</p></Reveal>
           <div className="writing-grid">
             <Reveal className="writing-lead">
               <p className="eyebrow">THINKING IN PUBLIC</p>
               <h2>Notes from inside<br /><em>the system.</em></h2>
-              <p>Long-form ideas about reliable backends, intelligent products and the details that make software feel considered.</p>
+              <p>A space for ideas about backend engineering, databases and the lessons that come from building software.</p>
             </Reveal>
-            <div className="article-list">
-              {articles.map((article, index) => (
-                <Reveal key={article.title} delay={index * 80}>
-                  <article>
-                    <span className="article-number">{article.number}</span>
-                    <div><p>{article.topic}</p><h3>{article.title}</h3><span>{article.read}</span></div>
-                  </article>
-                </Reveal>
-              ))}
-            </div>
+            <Reveal className="writing-link"><a href="https://medium.com/@satyamror1109" target="_blank" rel="noreferrer"><span>Follow on Medium</span><Arrow diagonal /></a><p>New articles will appear here as they’re published.</p></Reveal>
           </div>
         </section>
 
         <section className="contact section-pad dark-surface" id="contact" onPointerMove={illuminateGrid}>
-          <Reveal className="section-kicker light"><span>07</span><p>Start a conversation</p></Reveal>
+          <Reveal className="section-kicker light"><span>08</span><p>Start a conversation</p></Reveal>
           <div className="contact-grid">
             <Reveal>
               <p className="contact-overline">HAVE A PROJECT, ROLE OR IDEA?</p>
@@ -562,9 +562,9 @@ function App() {
       )}
 
       <aside className="section-rail" aria-hidden="true">
-        <span>{activeSection === 'top' ? '01' : String(['experience', 'builds', 'skills', 'profiles', 'writing', 'contact'].indexOf(activeSection) + 2).padStart(2, '0')}</span>
+        <span>{activeSection === 'top' ? '01' : String(['impact', 'experience', 'builds', 'skills', 'profiles', 'writing', 'contact'].indexOf(activeSection) + 2).padStart(2, '0')}</span>
         <div><i style={{ transform: `scaleY(${scrollProgress})` }} /></div>
-        <span>07</span>
+        <span>08</span>
       </aside>
 
       <footer>
