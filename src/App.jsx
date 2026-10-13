@@ -106,6 +106,29 @@ const recognitions = [
   },
 ]
 
+function LightStrip({ hero = false }) {
+  const ref = useRef(null)
+  const [lit, setLit] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => setLit(entry.isIntersecting), { threshold: 0.1 })
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+
+  const path = 'M -20 14 H 290 Q 310 14 325 27 L 354 51 Q 370 64 390 64 H 1020'
+  return (
+    <div ref={ref} className={`light-strip ${hero ? 'light-strip-hero' : ''} ${lit ? 'is-lit' : ''}`} aria-hidden="true">
+      <svg viewBox="0 0 1000 80" preserveAspectRatio="none">
+        <path className="strip-bed" d={path} />
+        <path className="strip-glow" d={path} pathLength="100" />
+        <path className="strip-core" d={path} pathLength="100" />
+        <path className="strip-pulse" d={path} pathLength="100" />
+      </svg>
+    </div>
+  )
+}
+
 function MatrixRain() {
   const canvasRef = useRef(null)
 
@@ -136,7 +159,7 @@ function MatrixRain() {
           const x = index * 26
           const y = position * 18
           const alpha = 0.025 + Math.random() * 0.07
-          context.fillStyle = `rgba(117, 104, 212, ${alpha})`
+          context.fillStyle = `rgba(230, 58, 68, ${alpha})`
           context.fillText(char, x, y)
           columns[index] = y > window.innerHeight && Math.random() > 0.985 ? Math.random() * -30 : position + 1
         })
@@ -330,12 +353,17 @@ function App() {
 
       <main>
         <section className="hero" id="top" style={heroMotion} onPointerMove={shiftPortrait} onPointerLeave={resetPortrait}>
-          <div className="hero-stage">
+          <div className={`hero-stage ${heroProgress >= 0.995 ? 'intro-arrived' : ''}`}>
+            <LightStrip hero />
             <div className="hero-opening" aria-hidden="true">
               <p className="eyebrow hero-eyebrow"><span>SYS.01</span> SOFTWARE × DESIGN × SYSTEMS</p>
               <p className="opening-name"><span>I am</span><span>Satyam</span></p>
             </div>
             <div className="hero-introduction">
+              <svg className="intro-light-signature" viewBox="0 0 1000 32" preserveAspectRatio="none" aria-hidden="true">
+                <path pathLength="100" d="M 490 24 H 220 Q 204 24 194 16 L 180 6 H 0" />
+                <path pathLength="100" d="M 510 24 H 780 Q 796 24 806 16 L 820 6 H 1000" />
+              </svg>
               <h1>Satyam Singh</h1>
               <div className="hero-intro-description">
                 <p>Software Engineer with 2.8 years of experience at GlobalLogic, building reliable backend systems with Java, Spring Boot, microservices and REST APIs. Experienced in enterprise modernization, PostgreSQL optimization, Kafka and Debezium CDC, with additional frontend experience in React.</p>
@@ -363,6 +391,7 @@ function App() {
         </section>
 
         <section className="impact-section section-pad dark-surface" id="impact" onPointerMove={illuminateGrid} aria-labelledby="impact-title">
+          <LightStrip />
           <Reveal className="section-kicker"><span>02</span><p>Highlights</p></Reveal>
           <Reveal className="impact-heading"><h2 id="impact-title">Selected <em>impact.</em></h2><p>Faster APIs. Reliable services.<br />Work that makes a measurable difference.</p></Reveal>
           <div className="impact-grid">
@@ -379,6 +408,7 @@ function App() {
         </section>
 
         <section className="work experience section-pad dark-surface" id="experience" onPointerMove={illuminateGrid}>
+          <LightStrip />
           <Reveal className="section-kicker"><span>03</span><p>Experience / Recognition</p></Reveal>
           <div className="experience-grid experience-lead">
             <Reveal className="timeline">
@@ -446,6 +476,7 @@ function App() {
         </section>
 
         <section className="personal section-pad dark-surface" id="builds" onPointerMove={illuminateGrid}>
+          <LightStrip />
           <Reveal className="section-kicker"><span>04</span><p>Personal Builds</p></Reveal>
           <Reveal className="project-section-heading personal-heading">
             <h2>Personal<br /><em>projects.</em></h2>
@@ -466,6 +497,7 @@ function App() {
         </section>
 
         <section className="skills section-pad dark-surface" id="skills" onPointerMove={illuminateGrid}>
+          <LightStrip />
           <Reveal className="section-kicker"><span>05</span><p>Technical toolkit</p></Reveal>
           <div className="skill-groups">
             {skillGroups.map((group, index) => (
@@ -481,6 +513,7 @@ function App() {
         </section>
 
         <section className="profiles section-pad dark-surface" id="profiles" onPointerMove={illuminateGrid}>
+          <LightStrip />
           <Reveal className="section-kicker"><span>06</span><p>Find me across</p></Reveal>
           <div className="profile-layout">
             <Reveal className="profile-intro">
@@ -507,6 +540,7 @@ function App() {
         </section>
 
         <section className="writing section-pad dark-surface" id="writing" onPointerMove={illuminateGrid}>
+          <LightStrip />
           <Reveal className="section-kicker"><span>07</span><p>Writing</p></Reveal>
           <div className="writing-grid">
             <Reveal className="writing-lead">
@@ -519,6 +553,7 @@ function App() {
         </section>
 
         <section className="contact section-pad dark-surface" id="contact" onPointerMove={illuminateGrid}>
+          <LightStrip />
           <Reveal className="section-kicker light"><span>08</span><p>Start a conversation</p></Reveal>
           <div className="contact-grid">
             <Reveal>
