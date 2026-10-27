@@ -62,6 +62,25 @@ const professionalProjects = [
 const personalProjects = [
   {
     number: '01',
+    type: 'AI-powered learning & knowledge retention',
+    title: 'Retainzy',
+    href: 'https://retainzy.in',
+    logo: '/retainzy-logo.png',
+    background: '/retainzy-project-preview.png',
+    featured: true,
+    summary: 'A full-stack learning platform that turns knowledge into rich learning cards, helps learners retain it through spaced repetition, and uses AI to generate cards from PDFs.',
+    work: [
+      'Built rich learning cards with formatted text, code, tables and Cloudinary image uploads, alongside spaced-repetition scheduling and learning analytics.',
+      'Implemented Google OAuth 2.0, JWT authentication and role-based access control, with a dedicated admin portal for viewing users and their cards.',
+      'Developed PDF-based retrieval-augmented generation using Spring AI, Gemini and vector embeddings to create topic-based cards with source evidence.',
+      'Added conversational draft refinement with chat history so learners can shape AI-generated cards before saving them.',
+      'Containerized services with Docker, with AWS EC2, ECR and RDS, Vercel and GitHub Actions in the deployment stack.',
+    ],
+    impact: 'Learn once. Remember longer.',
+    stack: ['LLM', 'RAG', 'Spring Boot', 'Spring AI', 'React', 'PostgreSQL', 'Gemini', 'Cloudinary', 'Docker', 'AWS EC2', 'AWS ECR', 'AWS RDS', 'Vercel', 'GitHub Actions'],
+  },
+  {
+    number: '02',
     type: 'AI-powered commerce',
     title: 'Semantic Commerce',
     summary: 'A full-stack commerce platform that combines semantic discovery, local AI and reliable event-driven order processing.',
@@ -346,6 +365,9 @@ function App() {
           <a className={activeSection === 'contact' ? 'active' : ''} href="#contact" onClick={closeMenu}>Contact</a>
           <a href="/satyam-singh-resume.pdf" target="_blank" rel="noreferrer" onClick={closeMenu}>Résumé <Arrow diagonal /></a>
         </nav>
+        <a className="retainzy-nav-link" href="https://retainzy.in" target="_blank" rel="noopener noreferrer" aria-label="Visit Retainzy (opens in a new tab)">
+          <img src="/retainzy-logo.png" alt="Retainzy" /><span>Visit Retainzy <Arrow diagonal /></span>
+        </a>
         <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-label="Toggle menu">
           <span /><span />
         </button>
@@ -484,10 +506,14 @@ function App() {
           </Reveal>
           <div className="personal-layout">
             {personalProjects.map((project) => (
-              <Reveal className="personal-feature" key={project.title}>
+              <Reveal className={`personal-feature ${project.featured ? 'major-build' : ''}`} key={project.title}>
+                {project.background && <img className="personal-background" src={project.background} alt="" aria-hidden="true" loading="lazy" />}
                 <p className="project-type">{project.type}</p>
-                <p className="personal-number">{project.number} / FEATURED BUILD</p>
-                <h2>{project.title}</h2>
+                <p className="personal-number">{project.number} / {project.featured ? 'FLAGSHIP PROJECT' : 'PERSONAL BUILD'}</p>
+                <div className="personal-title-row">
+                  <h2>{project.title}</h2>
+                  {project.href && <a className="project-visit" href={project.href} target="_blank" rel="noopener noreferrer"><img src={project.logo} alt="Retainzy" /><span>Visit Retainzy <Arrow diagonal /></span></a>}
+                </div>
                 <p>{project.summary}</p>
                 <ul className="personal-contributions">{project.work.map(item => <li key={item}>{item}</li>)}</ul>
                 <div className="personal-footer"><span>{project.impact}</span><div>{project.stack.map(item => <span key={item}>{item}</span>)}</div></div>
