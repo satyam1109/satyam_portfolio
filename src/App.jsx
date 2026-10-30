@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import RetainzyShowcase from './RetainzyShowcase'
 import { FaAws, FaJava } from 'react-icons/fa'
 import {
   SiApachekafka, SiCss, SiGit, SiGithub, SiHtml5,
@@ -505,7 +506,8 @@ function App() {
             <p>Products and technical experiments built independently—from intelligent search and local AI to full-stack product systems.</p>
           </Reveal>
           <div className="personal-layout">
-            {personalProjects.map((project) => (
+            <RetainzyShowcase project={personalProjects[0]} />
+            {personalProjects.filter(project => !project.featured).map((project) => (
               <Reveal className={`personal-feature ${project.featured ? 'major-build' : ''}`} key={project.title}>
                 {project.background && <img className="personal-background" src={project.background} alt="" aria-hidden="true" loading="lazy" />}
                 <p className="project-type">{project.type}</p>
