@@ -21,6 +21,7 @@ const stories = {
 
 export default function ExperiencePanels({ project }) {
   const track = useRef(null)
+  const disclosure = useRef(null)
   const story = stories[project.title]
 
   useEffect(() => {
@@ -33,20 +34,30 @@ export default function ExperiencePanels({ project }) {
       const distance = Math.max(1, element.offsetHeight - window.innerHeight)
       const pinTop = window.innerWidth <= 600 ? 76 : 88
       const raw = Math.min(1, Math.max(0, (pinTop - rect.top) / (distance * .9)))
-      const progress = reduced.matches ? 1 : raw * raw * (3 - 2 * raw)
+      const staticView = reduced.matches || window.innerHeight <= 650
+      const collapse = Math.min(1, raw / .9)
+      const progress = staticView ? 1 : collapse * collapse * (3 - 2 * collapse)
+      const arrival = Math.min(1, Math.max(0, (raw - .9) / .1))
+      const reveal = staticView || disclosure.current.querySelector('details').open ? 1 : arrival * arrival * (3 - 2 * arrival)
       element.style.setProperty('--panel-progress', progress)
       element.style.setProperty('--label-width', `${34 * (1 - progress)}%`)
+      element.style.setProperty('--details-reveal', reveal)
+      element.style.setProperty('--details-row', `${reveal}fr`)
+      disclosure.current.inert = reveal < .95
+      disclosure.current.setAttribute('aria-hidden', String(reveal < .95))
     }
     const schedule = () => { if (!frame) frame = requestAnimationFrame(update) }
     update()
     window.addEventListener('scroll', schedule, { passive: true })
     window.addEventListener('resize', schedule)
     reduced.addEventListener('change', schedule)
+    element.addEventListener('toggle', schedule, true)
     return () => {
       cancelAnimationFrame(frame)
       window.removeEventListener('scroll', schedule)
       window.removeEventListener('resize', schedule)
       reduced.removeEventListener('change', schedule)
+      element.removeEventListener('toggle', schedule, true)
     }
   }, [])
 
@@ -71,11 +82,13 @@ export default function ExperiencePanels({ project }) {
               <div className="case-light" aria-hidden="true"><i /></div>
             </section>
           </div>
+          <div className="case-details-reveal" ref={disclosure}>
           <details className="technical-details case-details">
             <summary>All contributions & complete stack — {project.title}</summary>
             <ul>{project.work.map(item => <li key={item}>{item}</li>)}</ul>
             <p className="details-stack">{project.stack.join(' · ')}</p>
           </details>
+          </div>
         </div>
       </div>
     </article>

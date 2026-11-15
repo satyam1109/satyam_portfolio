@@ -21,6 +21,8 @@ export default function LandingHero() {
       const frameHeight = window.innerWidth <= 600 ? window.innerHeight * .54 : window.innerHeight * .94 - 112
       const fittedScale = Math.min(1, frameHeight / photoHeight)
       element.style.setProperty('--hero-ease', progress)
+      element.style.setProperty('--name-exit', reduced.matches ? 1 : smooth(clamp(raw / .65)))
+      element.style.setProperty('--name-opacity', reduced.matches ? 0 : 1 - smooth(clamp((raw - .12) / .42)))
       element.style.setProperty('--photo-fit', 1 - progress * (1 - fittedScale))
       element.style.setProperty('--intro-reveal', reveal)
       element.style.setProperty('--side-visibility', reveal > .01 ? 'visible' : 'hidden')
@@ -54,12 +56,13 @@ export default function LandingHero() {
         <div className="landing-side landing-side-left">
           <span className="landing-side-label">01 / Engineering</span>
           <h2>Software<br />Engineer.</h2>
-          <p>3 years of experience at GlobalLogic.<br />Java, Spring Boot and reliable backend systems.</p>
+          <p>3 years of building scalable applications with Java, Spring Boot, React, and Azure Cloud.</p>
+          <p>Crafting reliable systems, from backend architecture to user experiences.</p>
         </div>
         <div className="landing-side landing-side-right">
           <span className="landing-side-label">02 / Building</span>
           <h2>Ideas into<br />products.</h2>
-          <p>From enterprise APIs to Retainzy — AI-powered learning, built end to end.</p>
+          <p>From enterprise applications to AI-powered products, I love building solutions that solve real problems.</p>
           <a href="#builds">Explore my projects <span aria-hidden="true">↗</span></a>
         </div>
         <div className="landing-scroll" aria-hidden="true"><span>Scroll to discover</span><span>↓</span></div>

@@ -45,7 +45,7 @@ main > .contact { background: #202020; }
 .contact-form button { background: #eee; color: #111; box-shadow: none; border-radius: 12px; }
 .contact-form button:hover { background: #fff; color: #111; box-shadow: none; }
 .contact-form button:disabled { opacity: .6; }
-.experience-scroll-track { height: 195svh; }
+.experience-scroll-track { height: 195svh; overflow-anchor: none; }
 .experience-pin { top: 88px; }
 .experience-panels { min-height: 65svh; }
 .experience-label { background: #eeede7; color: #181818; border-color: #eeede7; opacity: 1; }
@@ -60,14 +60,16 @@ main > .contact { background: #202020; }
 .contribution-stack { color: #bdbdb7; }
 .case-light { background: #ffffff18; }
 .case-light i { background: #b5b5af; box-shadow: none; }
-.experience-pin .experience-label, .experience-pin .experience-contribution { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.experience-pin .experience-label, .experience-pin .experience-contribution { border-bottom-left-radius: calc(38px * (1 - var(--details-reveal,0))); border-bottom-right-radius: calc(38px * (1 - var(--details-reveal,0))); }
+.case-details-reveal { display: grid; grid-template-rows: var(--details-row,0fr); opacity: var(--details-reveal,0); transform: translateY(calc(12px * (1 - var(--details-reveal,0)))); }
+.case-details-reveal > .case-details { min-height: 0; overflow: hidden; }
 .experience-pin .case-details { margin: 0; padding: 0 28px; background: #f5f4ef; color: #191919; border-radius: 0 0 38px 38px; }
 .case-details summary { padding: 22px 4px; border-top: 1px solid #19191920; color: #191919; }
 .case-details summary::after, .case-details li::marker { color: #191919; }
 .case-details li, .case-details .details-stack { color: #41413b; }
 .case-details .details-stack { margin-bottom: 0; padding-bottom: 28px; }
-.experience-scroll-track:has(.case-details[open]) { height: auto; --panel-progress: 1 !important; --label-width: 0% !important; }
-.experience-pin:has(.case-details[open]) { position: relative; top: auto; }
+.experience-scroll-track:has(.case-details[open]) { --panel-progress: 1 !important; --label-width: 0% !important; }
+.experience-pin:has(.case-details[open]) { max-height: calc(100svh - 112px); overflow-y: auto; overscroll-behavior: contain; }
 .personal-heading { margin-bottom: 72px; }
 .personal-layout { display: block; padding-bottom: 70px; }
 .personal.dark-surface { overflow: clip; }

@@ -1,5 +1,6 @@
 .skills.toolkit-showcase { position: relative; z-index: 3; padding: 0; background: #191919; border: 1px solid #ffffff26; border-left: 0; border-right: 0; border-radius: 40px 40px 0 0; overflow: clip; margin-top: -20svh; box-shadow: 0 -22px 60px #0005; }
-.toolkit-animated { height: 850svh; }
+.skills.toolkit-showcase { width: calc(100% - var(--toolkit-inset,5vw) * 2); margin-left: auto; margin-right: auto; }
+.toolkit-animated { height: 1350svh; }
 .toolkit-stage { position: sticky; top: 64px; height: calc(100svh - 64px); border-radius: 40px 40px 0 0; background: #191919; overflow: hidden; }
 .toolkit-header { position: absolute; z-index: 3; top: 26px; left: 5vw; right: 5vw; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .toolkit-header p { color: #aaa; margin: 0 0 6px; font: .8125rem/1.5 var(--sans); }

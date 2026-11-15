@@ -4,6 +4,14 @@ import './technical-toolkit.css'
 const clamp = n => Math.max(0, Math.min(1, n))
 const smooth = n => n * n * (3 - 2 * n)
 const mix = (a, b, t) => a + (b - a) * t
+// Gentle acceleration and braking, with a steady speed through most of the arc.
+const glide = value => {
+  const t = clamp(value)
+  const edge = .12
+  if (t < edge) return t * t / (2 * edge * (1 - edge))
+  if (t > 1 - edge) return 1 - (1 - t) ** 2 / (2 * edge * (1 - edge))
+  return (t - edge / 2) / (1 - edge)
+}
 
 function SkillRows({ groups }) {
   return <div className="toolkit-overview">{groups.map(group => <div className="toolkit-overview-row" key={group.title}><h3>{group.title}</h3><div>{group.skills.map(skill => { const Icon = skill.icon; return <div className="toolkit-static-skill" key={skill.name}><Icon aria-hidden="true" /><span>{skill.name}</span></div> })}</div></div>)}</div>
@@ -17,6 +25,28 @@ export default function TechnicalToolkit({ groups }) {
   const status = useRef(null)
   const heading = useRef(null)
   const [animated, setAnimated] = useState(false)
+
+  useEffect(() => {
+    const element = root.current
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let frame = 0
+    const update = () => {
+      frame = 0
+      const arrival = smooth(clamp((window.innerHeight - element.getBoundingClientRect().top) / Math.max(1, window.innerHeight - 64)))
+      element.style.setProperty('--toolkit-inset', `${reduced.matches ? 0 : (1 - arrival) * 5}vw`)
+    }
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(update) }
+    update()
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+    reduced.addEventListener('change', schedule)
+    return () => {
+      cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
+      reduced.removeEventListener('change', schedule)
+    }
+  }, [])
 
   useEffect(() => {
     const media = window.matchMedia('(min-width: 1001px) and (min-height: 700px) and (prefers-reduced-motion: no-preference)')
@@ -36,7 +66,7 @@ export default function TechnicalToolkit({ groups }) {
       const height = window.innerHeight - 64
       const elapsed = Math.max(0, (64 - element.getBoundingClientRect().top) / window.innerHeight)
       const intro = smooth(clamp(elapsed / .75))
-      const time = Math.max(0, elapsed - .75)
+      const time = Math.max(0, elapsed - .75) / 1.8
       heading.current.style.setProperty('--title-x', `${mix(width * .45, 0, intro)}px`)
       heading.current.style.setProperty('--title-y', `${mix(height * .5 - 26, 26, intro)}px`)
       heading.current.style.setProperty('--title-anchor', `${(1 - intro) * -50}%`)
@@ -65,15 +95,20 @@ export default function TechnicalToolkit({ groups }) {
         const title = titles.current[groupIndex]
         title.style.opacity = visibility * (time < 5 ? enter : 1)
         title.style.transform = `translate(-50%,-50%) translate(${mix(0, width * .18 - centerX, morph)}px,${mix((1 - enter) * 35 - exit * 25, rowY - centerY, morph)}px) scale(${mix(.82 + enter * .18, 1, morph)})`
-        title.style.fontSize = `${mix(Math.min(width * .05, 58), 20, morph)}px`
+        title.style.fontSize = `${mix(Math.min(width * .03, radiusX * .17, 36), 20, morph)}px`
         title.style.fontFamily = morph < .65 ? "'Instrument Serif', Georgia, serif" : 'var(--sans)'
         title.style.fontStyle = morph < .65 ? 'italic' : 'normal'
         title.style.fontWeight = morph < .65 ? '400' : '500'
-        title.style.width = `${mix(Math.min(width * .72, 520), width * .28, morph)}px`
+        title.style.width = `${mix(radiusX * 1.45, width * .28, morph)}px`
         orbits.current[groupIndex].style.opacity = visibility * enter * (1 - morph) * .65
         nodes.current[groupIndex].forEach((node, skillIndex) => {
-          const emerge = smooth(clamp((local - .2 - skillIndex * .075) / .32))
-          const angle = -Math.PI / 2 + skillIndex * Math.PI * 2 / group.skills.length
+          // Every icon uses the same upward entry, then follows its predecessor
+          // counterclockwise around the ring. Earlier icons travel farther.
+          const start = .18 + skillIndex * .11
+          const emerge = smooth(clamp((local - start) / .15))
+          const travelSteps = group.skills.length - 1 - skillIndex
+          const steps = travelSteps === 0 ? 0 : travelSteps * glide((local - start - .15) / (.11 * travelSteps))
+          const angle = -Math.PI / 2 - steps * Math.PI * 2 / group.skills.length
           const orbitX = Math.cos(angle) * radiusX * emerge
           const orbitY = Math.sin(angle) * radiusY * emerge
           const rowX = width * (.42 + skillIndex * .48 / Math.max(1, group.skills.length - 1)) - centerX
