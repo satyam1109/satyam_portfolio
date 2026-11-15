@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import RetainzyShowcase from './RetainzyShowcase'
+import PersonalBuilds from './PersonalBuilds'
+import ExperiencePanels from './ExperiencePanels'
+import LandingHero from './LandingHero'
+import TechnicalToolkit from './TechnicalToolkit'
 import { FaAws, FaJava } from 'react-icons/fa'
 import {
   SiApachekafka, SiCss, SiGit, SiGithub, SiHtml5,
@@ -126,80 +129,6 @@ const recognitions = [
   },
 ]
 
-function LightStrip({ hero = false }) {
-  const ref = useRef(null)
-  const [lit, setLit] = useState(false)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => setLit(entry.isIntersecting), { threshold: 0.1 })
-    if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [])
-
-  const path = 'M -20 14 H 290 Q 310 14 325 27 L 354 51 Q 370 64 390 64 H 1020'
-  return (
-    <div ref={ref} className={`light-strip ${hero ? 'light-strip-hero' : ''} ${lit ? 'is-lit' : ''}`} aria-hidden="true">
-      <svg viewBox="0 0 1000 80" preserveAspectRatio="none">
-        <path className="strip-bed" d={path} />
-        <path className="strip-glow" d={path} pathLength="100" />
-        <path className="strip-core" d={path} pathLength="100" />
-        <path className="strip-pulse" d={path} pathLength="100" />
-      </svg>
-    </div>
-  )
-}
-
-function MatrixRain() {
-  const canvasRef = useRef(null)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    const context = canvas.getContext('2d')
-    const glyphs = '01{}[]<>/;:SATYAMCODEDESIGN'
-    let columns = []
-    let animationFrame
-    let lastDraw = 0
-
-    const resize = () => {
-      const ratio = Math.min(window.devicePixelRatio || 1, 2)
-      canvas.width = window.innerWidth * ratio
-      canvas.height = window.innerHeight * ratio
-      canvas.style.width = `${window.innerWidth}px`
-      canvas.style.height = `${window.innerHeight}px`
-      context.setTransform(ratio, 0, 0, ratio, 0, 0)
-      columns = Array.from({ length: Math.ceil(window.innerWidth / 26) }, () => Math.random() * -50)
-    }
-
-    const draw = (time) => {
-      if (time - lastDraw > 76) {
-        context.clearRect(0, 0, window.innerWidth, window.innerHeight)
-        context.font = '11px monospace'
-        columns.forEach((position, index) => {
-          const char = glyphs[Math.floor(Math.random() * glyphs.length)]
-          const x = index * 26
-          const y = position * 18
-          const alpha = 0.025 + Math.random() * 0.07
-          context.fillStyle = `rgba(230, 58, 68, ${alpha})`
-          context.fillText(char, x, y)
-          columns[index] = y > window.innerHeight && Math.random() > 0.985 ? Math.random() * -30 : position + 1
-        })
-        lastDraw = time
-      }
-      animationFrame = requestAnimationFrame(draw)
-    }
-
-    resize()
-    window.addEventListener('resize', resize)
-    animationFrame = requestAnimationFrame(draw)
-    return () => {
-      window.removeEventListener('resize', resize)
-      cancelAnimationFrame(animationFrame)
-    }
-  }, [])
-
-  return <canvas ref={canvasRef} className="matrix-canvas" aria-hidden="true" />
-}
-
 function Reveal({ children, className = '', delay = 0 }) {
   const ref = useRef(null)
   const [visible, setVisible] = useState(false)
@@ -229,27 +158,15 @@ function Arrow({ diagonal = false }) {
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [formState, setFormState] = useState('idle')
-  const [time, setTime] = useState('')
   const [activeSection, setActiveSection] = useState('top')
   const [scrollProgress, setScrollProgress] = useState(0)
-  const [heroProgress, setHeroProgress] = useState(0)
   const [activeCertificate, setActiveCertificate] = useState(null)
 
   useEffect(() => {
-    const tick = () => setTime(new Intl.DateTimeFormat('en-GB', {
-      timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: false,
-    }).format(new Date()))
-    tick()
-    const id = setInterval(tick, 30000)
-    return () => clearInterval(id)
-  }, [])
-
-  useEffect(() => {
-    const sectionIds = ['impact', 'experience', 'builds', 'skills', 'profiles', 'writing', 'contact']
+    const sectionIds = ['impact', 'experience', 'builds', 'skills', 'profiles', 'contact']
     const updateScrollState = () => {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight
       setScrollProgress(maxScroll > 0 ? window.scrollY / maxScroll : 0)
-      setHeroProgress(Math.min(1, Math.max(0, window.scrollY / (window.innerHeight * 0.68))))
       const probe = window.scrollY + window.innerHeight * 0.38
       let current = 'top'
       sectionIds.forEach((id) => {
@@ -291,46 +208,6 @@ function App() {
     event.currentTarget.style.setProperty('--my', `${event.clientY - rect.top}px`)
   }
 
-  const shiftPortrait = (event) => {
-    const rect = event.currentTarget.getBoundingClientRect()
-    const x = ((event.clientX - rect.left) / rect.width - 0.5) * 12
-    const y = ((event.clientY - rect.top) / rect.height - 0.5) * 10
-    event.currentTarget.style.setProperty('--portrait-x', `${x}px`)
-    event.currentTarget.style.setProperty('--portrait-y', `${y}px`)
-  }
-
-  const resetPortrait = (event) => {
-    event.currentTarget.style.setProperty('--portrait-x', '0px')
-    event.currentTarget.style.setProperty('--portrait-y', '0px')
-  }
-
-  const easeStage = (start, end) => {
-    const progress = Math.min(1, Math.max(0, (heroProgress - start) / (end - start)))
-    return progress * progress * (3 - 2 * progress)
-  }
-  const descriptionProgress = easeStage(0.72, 1)
-  const portraitExitProgress = Math.min(1, Math.max(0, (heroProgress - 0.86) / 0.14))
-
-  const heroMotion = {
-    '--hero-progress': heroProgress,
-    '--opening-opacity': 1 - easeStage(0.12, 0.52),
-    '--opening-y': `${easeStage(0.12, 0.52) * -36}px`,
-    '--intro-name-opacity': easeStage(0.45, 0.78),
-    '--intro-name-y': `${(1 - easeStage(0.45, 0.78)) * 36}px`,
-    '--hero-clip': `${heroProgress * 100}%`,
-    '--hero-divider': `${52 + heroProgress * 48}%`,
-    '--hero-shift': `${heroProgress * 13}vw`,
-    '--hero-copy-width': `${52 + heroProgress * 48}vw`,
-    '--hero-second-indent': `${9 - heroProgress * 9}vw`,
-    '--hero-eyebrow-opacity': 1 - heroProgress * 0.82,
-    '--hero-chrome-opacity': 1 - heroProgress,
-    '--hero-description-opacity': descriptionProgress,
-    '--hero-description-y': `${(1 - descriptionProgress) * 42}px`,
-    '--hero-description-blur': `${(1 - descriptionProgress) * 8}px`,
-    '--hero-description-events': descriptionProgress > 0.15 ? 'auto' : 'none',
-    '--hero-portrait-opacity': 1 - portraitExitProgress,
-  }
-
   const submitForm = async (event) => {
     event.preventDefault()
     setFormState('sending')
@@ -353,8 +230,6 @@ function App() {
 
   return (
     <div className="site-shell">
-      <MatrixRain />
-      <div className="noise" aria-hidden="true" />
       <div className="scroll-progress" style={{ transform: `scaleX(${scrollProgress})` }} aria-hidden="true" />
 
       <header className="nav">
@@ -362,61 +237,21 @@ function App() {
         <nav className={menuOpen ? 'nav-links open' : 'nav-links'} aria-label="Primary navigation">
           <a className={activeSection === 'experience' ? 'active' : ''} href="#experience" onClick={closeMenu}>Experience</a>
           <a className={activeSection === 'builds' ? 'active' : ''} href="#builds" onClick={closeMenu}>Builds</a>
-          <a className={activeSection === 'writing' ? 'active' : ''} href="#writing" onClick={closeMenu}>Writing</a>
+          <a className={activeSection === 'skills' ? 'active' : ''} href="#skills" onClick={closeMenu}>Skills</a>
           <a className={activeSection === 'contact' ? 'active' : ''} href="#contact" onClick={closeMenu}>Contact</a>
           <a href="/satyam-singh-resume.pdf" target="_blank" rel="noreferrer" onClick={closeMenu}>Résumé <Arrow diagonal /></a>
         </nav>
-        <a className="retainzy-nav-link" href="https://retainzy.in" target="_blank" rel="noopener noreferrer" aria-label="Visit Retainzy (opens in a new tab)">
-          <img src="/retainzy-logo.png" alt="Retainzy" /><span>Visit Retainzy <Arrow diagonal /></span>
-        </a>
         <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-label="Toggle menu">
           <span /><span />
         </button>
       </header>
 
       <main>
-        <section className="hero" id="top" style={heroMotion} onPointerMove={shiftPortrait} onPointerLeave={resetPortrait}>
-          <div className={`hero-stage ${heroProgress >= 0.995 ? 'intro-arrived' : ''}`}>
-            <LightStrip hero />
-            <div className="hero-opening" aria-hidden="true">
-              <p className="eyebrow hero-eyebrow"><span>SYS.01</span> SOFTWARE × DESIGN × SYSTEMS</p>
-              <p className="opening-name"><span>I am</span><span>Satyam</span></p>
-            </div>
-            <div className="hero-introduction">
-              <svg className="intro-light-signature" viewBox="0 0 1000 32" preserveAspectRatio="none" aria-hidden="true">
-                <path pathLength="100" d="M 490 24 H 220 Q 204 24 194 16 L 180 6 H 0" />
-                <path pathLength="100" d="M 510 24 H 780 Q 796 24 806 16 L 820 6 H 1000" />
-              </svg>
-              <h1>Satyam Singh</h1>
-              <div className="hero-intro-description">
-                <p>Software Engineer with 2.8 years of experience at GlobalLogic, building reliable backend systems with Java, Spring Boot, microservices and REST APIs. Experienced in enterprise modernization, PostgreSQL optimization, Kafka and Debezium CDC, with additional frontend experience in React.</p>
-                <a className="circle-link" href="#impact" tabIndex={descriptionProgress > 0.95 ? 0 : -1} aria-label="Explore selected impact"><Arrow /></a>
-              </div>
-            </div>
-
-            <div className="portrait-wrap">
-              <div className="portrait-frame">
-                <img src="/satyam-portrait.png" alt="Satyam Singh working at his desk" />
-                <div className="portrait-scan" aria-hidden="true" />
-              </div>
-              <div className="portrait-code" aria-hidden="true">
-                <span>STATUS // AVAILABLE</span>
-                <span>LOC // BLR, IN</span>
-              </div>
-            </div>
-
-            <div className="hero-divider" aria-hidden="true" />
-            <div className="hero-index" aria-hidden="true">
-              <span className="active">01</span><span>02</span><span>03</span><span>04</span>
-            </div>
-            <div className="scroll-note"><span className="scroll-line" />SCROLL TO REFRAME</div>
-          </div>
-        </section>
+        <LandingHero />
 
         <section className="impact-section section-pad dark-surface" id="impact" onPointerMove={illuminateGrid} aria-labelledby="impact-title">
-          <LightStrip />
           <Reveal className="section-kicker"><span>02</span><p>Highlights</p></Reveal>
-          <Reveal className="impact-heading"><h2 id="impact-title">Selected <em>impact.</em></h2><p>Faster APIs. Reliable services.<br />Work that makes a measurable difference.</p></Reveal>
+          <Reveal className="impact-heading"><h2 id="impact-title">Selected <em>impact.</em></h2><p>Results from my work at GlobalLogic.</p></Reveal>
           <div className="impact-grid">
             {impactStats.map((stat, index) => (
               <Reveal className={`impact-card ${stat.featured ? 'impact-featured' : ''}`} key={stat.label} delay={index * 90}>
@@ -431,7 +266,6 @@ function App() {
         </section>
 
         <section className="work experience section-pad dark-surface" id="experience" onPointerMove={illuminateGrid}>
-          <LightStrip />
           <Reveal className="section-kicker"><span>03</span><p>Experience / Recognition</p></Reveal>
           <div className="experience-grid experience-lead">
             <Reveal className="timeline">
@@ -442,8 +276,7 @@ function App() {
                 <div className="company-identity">
                   <img src="/globallogic-logo.png" alt="GlobalLogic, a Hitachi Group Company" />
                 </div>
-                <p>Software Engineer with 2.8 years of experience in Java, Spring Boot, microservices and REST APIs. My work spans QAD’s ERP modernization and Hitachi’s BuilMirai platform, with hands-on experience in PostgreSQL, Kafka and Debezium CDC.</p>
-                <p className="availability-note">Serving notice period · Open to Java Backend and Full Stack roles.</p>
+                <p>Backend development for Hitachi’s BuilMirai platform and QAD Adaptive ERP: REST APIs, database optimization and legacy modernization.</p>
               </article>
             </Reveal>
             <Reveal className="recognition" delay={140}>
@@ -466,87 +299,22 @@ function App() {
             </Reveal>
           </div>
           <Reveal className="role-projects-heading">
-            <span>PROJECTS WITHIN THIS ROLE</span>
-            <p>Building APIs, modernizing legacy workflows and improving the systems people use every day.</p>
+            <h3>Projects & contributions</h3>
           </Reveal>
           <div className="project-list">
-            {professionalProjects.map((project, index) => (
-              <Reveal key={project.title} delay={index * 80}>
-                <article className="project-card" tabIndex="0">
-                  <div className="project-number">{project.number}</div>
-                  <div className="project-content">
-                    <div className="project-summary-view">
-                      <p className="project-type">{project.type}</p>
-                      <h2>{project.title}</h2>
-                      <p className="project-summary">{project.summary}</p>
-                      <p className="project-hint">HOVER OR FOCUS TO EXPLORE MY CONTRIBUTION <span>→</span></p>
-                    </div>
-                    <div className="project-detail-view">
-                      <p className="project-type">My contribution / {project.title}</p>
-                      <ul>{project.work.map(item => <li key={item}>{item}</li>)}</ul>
-                    </div>
-                  </div>
-                  <div className="project-meta">
-                    <p>{project.impact}</p>
-                    <span className="stack-label">COMPLETE STACK</span>
-                    <div>{project.stack.map(item => <span key={item}>{item}</span>)}</div>
-                  </div>
-                  <div className="project-arrow"><span className="closed">↗</span><span className="open">×</span></div>
-                </article>
-              </Reveal>
-            ))}
+            {professionalProjects.map(project => <ExperiencePanels key={project.title} project={project} />)}
           </div>
         </section>
 
-        <section className="personal section-pad dark-surface" id="builds" onPointerMove={illuminateGrid}>
-          <LightStrip />
-          <Reveal className="section-kicker"><span>04</span><p>Personal Builds</p></Reveal>
-          <Reveal className="project-section-heading personal-heading">
-            <h2>Personal<br /><em>projects.</em></h2>
-            <p>Products and technical experiments built independently—from intelligent search and local AI to full-stack product systems.</p>
-          </Reveal>
-          <div className="personal-layout">
-            <RetainzyShowcase project={personalProjects[0]} />
-            {personalProjects.filter(project => !project.featured).map((project) => (
-              <Reveal className={`personal-feature ${project.featured ? 'major-build' : ''}`} key={project.title}>
-                {project.background && <img className="personal-background" src={project.background} alt="" aria-hidden="true" loading="lazy" />}
-                <p className="project-type">{project.type}</p>
-                <p className="personal-number">{project.number} / {project.featured ? 'FLAGSHIP PROJECT' : 'PERSONAL BUILD'}</p>
-                <div className="personal-title-row">
-                  <h2>{project.title}</h2>
-                  {project.href && <a className="project-visit" href={project.href} target="_blank" rel="noopener noreferrer"><img src={project.logo} alt="Retainzy" /><span>Visit Retainzy <Arrow diagonal /></span></a>}
-                </div>
-                <p>{project.summary}</p>
-                <ul className="personal-contributions">{project.work.map(item => <li key={item}>{item}</li>)}</ul>
-                <div className="personal-footer"><span>{project.impact}</span><div>{project.stack.map(item => <span key={item}>{item}</span>)}</div></div>
-              </Reveal>
-            ))}
-          </div>
-        </section>
+        <PersonalBuilds projects={personalProjects} />
 
-        <section className="skills section-pad dark-surface" id="skills" onPointerMove={illuminateGrid}>
-          <LightStrip />
-          <Reveal className="section-kicker"><span>05</span><p>Technical toolkit</p></Reveal>
-          <div className="skill-groups">
-            {skillGroups.map((group, index) => (
-              <Reveal className="skill-group" key={group.title} delay={index * 70}>
-                <div className="skill-heading"><span>{group.number}</span><h3>{group.title}</h3></div>
-                <div className="skill-list">{group.skills.map(skill => {
-                  const Icon = skill.icon
-                  return <div className="skill-item" key={skill.name}><Icon aria-hidden="true" /><span>{skill.name}</span></div>
-                })}</div>
-              </Reveal>
-            ))}
-          </div>
-        </section>
+        <TechnicalToolkit groups={skillGroups} />
 
         <section className="profiles section-pad dark-surface" id="profiles" onPointerMove={illuminateGrid}>
-          <LightStrip />
           <Reveal className="section-kicker"><span>06</span><p>Find me across</p></Reveal>
           <div className="profile-layout">
             <Reveal className="profile-intro">
-              <h2 className="profiles-title">Find me<br /><em>in the wild.</em></h2>
-              <div className="profile-status"><span className="signal-dot" /><p>One person.<br />Different places.</p></div>
+              <h2 className="profiles-title">Find me online.</h2>
             </Reveal>
             <div className="profile-rows">
               {profiles.map((profile, index) => {
@@ -567,27 +335,13 @@ function App() {
           </div>
         </section>
 
-        <section className="writing section-pad dark-surface" id="writing" onPointerMove={illuminateGrid}>
-          <LightStrip />
-          <Reveal className="section-kicker"><span>07</span><p>Writing</p></Reveal>
-          <div className="writing-grid">
-            <Reveal className="writing-lead">
-              <p className="eyebrow">THINKING IN PUBLIC</p>
-              <h2>Notes from inside<br /><em>the system.</em></h2>
-              <p>A space for ideas about backend engineering, databases and the lessons that come from building software.</p>
-            </Reveal>
-            <Reveal className="writing-link"><a href="https://medium.com/@satyamror1109" target="_blank" rel="noreferrer"><span>Follow on Medium</span><Arrow diagonal /></a><p>New articles will appear here as they’re published.</p></Reveal>
-          </div>
-        </section>
-
         <section className="contact section-pad dark-surface" id="contact" onPointerMove={illuminateGrid}>
-          <LightStrip />
-          <Reveal className="section-kicker light"><span>08</span><p>Start a conversation</p></Reveal>
+          <Reveal className="section-kicker light"><span>07</span><p>Contact</p></Reveal>
           <div className="contact-grid">
             <Reveal>
-              <p className="contact-overline">HAVE A PROJECT, ROLE OR IDEA?</p>
-              <h2>Let’s make<br /><em>something real.</em></h2>
-              <p className="contact-sub">Tell me what you’re building. I’ll get back to you over email.</p>
+              <h2>Bring me a problem.<br /><em>I’ll build the solution.</em></h2>
+              <p className="contact-sub">Have a technical challenge, a product idea or a role in mind? Tell me about it.</p>
+              <p className="availability-note">Open to Java Backend and Full Stack roles.</p>
               <a className="email-link" href="mailto:satyamror1109@gmail.com">satyamror1109@gmail.com <Arrow diagonal /></a>
             </Reveal>
             <Reveal delay={120}>
@@ -599,11 +353,11 @@ function App() {
                 <label><span>02 / Email address</span><input name="email" type="email" placeholder="jane@company.com" required /></label>
                 <label><span>03 / Your message</span><textarea name="message" placeholder="A little about your idea, project or role..." rows="4" required /></label>
                 <button type="submit" disabled={formState === 'sending'}>
-                  <span>{formState === 'sending' ? 'TRANSMITTING...' : 'SEND MESSAGE'}</span><Arrow diagonal />
+                  <span>{formState === 'sending' ? 'Sending…' : 'Send message'}</span><Arrow diagonal />
                 </button>
                 <div className="form-status" role="status" aria-live="polite">
-                  {formState === 'success' && 'Message transmitted. I’ll be in touch soon.'}
-                  {formState === 'error' && <>Transmission failed. Email me directly at <a href="mailto:satyamror1109@gmail.com">satyamror1109@gmail.com</a>.</>}
+                  {formState === 'success' && 'Message sent. I’ll be in touch soon.'}
+                  {formState === 'error' && <>Couldn’t send your message. Email me at <a href="mailto:satyamror1109@gmail.com">satyamror1109@gmail.com</a>.</>}
                 </div>
               </form>
             </Reveal>
@@ -625,15 +379,15 @@ function App() {
       )}
 
       <aside className="section-rail" aria-hidden="true">
-        <span>{activeSection === 'top' ? '01' : String(['impact', 'experience', 'builds', 'skills', 'profiles', 'writing', 'contact'].indexOf(activeSection) + 2).padStart(2, '0')}</span>
+        <span>{activeSection === 'top' ? '01' : String(['impact', 'experience', 'builds', 'skills', 'profiles', 'contact'].indexOf(activeSection) + 2).padStart(2, '0')}</span>
         <div><i style={{ transform: `scaleY(${scrollProgress})` }} /></div>
-        <span>08</span>
+        <span>07</span>
       </aside>
 
       <footer>
         <a href="#top" className="monogram">SS</a>
         <p>© {new Date().getFullYear()} Satyam Singh</p>
-        <div><span className="signal-dot" /> Bengaluru / {time} IST</div>
+        <div>Bengaluru, India</div>
       </footer>
     </div>
   )

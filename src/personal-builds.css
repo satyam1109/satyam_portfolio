@@ -1,0 +1,45 @@
+.personal.builds-showcase { position: relative; padding: 0; background: #101010; border-radius: 36px 36px 0 0; border-top: 1px solid #ffffff1f; margin: 0; overflow: clip; isolation: isolate; }
+.builds-intro-track { position: relative; --portal-radius: 0vmax; --intro-opacity: 1; --intro-scale: 1; }
+.builds-intro-stage { position: sticky; top: 64px; height: calc(100svh - 64px); margin: 0; overflow: hidden; }
+.builds-opening { min-height: calc(100svh - 64px); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 32px 5vw; text-align: center; }
+.builds-overline { margin: 0 0 26px; font: .875rem/1.5 var(--sans); color: #bdbdb6; }
+.builds-opening h2 { margin: 0; font: 700 min(17vw,22svh)/.88 var(--sans); letter-spacing: -.075em; color: #f0efeb; }
+.builds-opening h2 span { color: #85857f; }
+.builds-opening-copy { margin: 32px 0 0; color: #bcbcb5; font: 1.125rem/1.75 var(--sans); }
+.builds-animated .builds-opening { opacity: var(--intro-opacity); transform: scale(var(--intro-scale)); }
+.builds-project-panel { position: absolute; inset: 0; overflow: hidden; border-radius: 32px; background: #eeede7; }
+.builds-project-panel[inert] { pointer-events: none; }
+.builds-project-panel:has(details[open]) { overflow-y: auto; overscroll-behavior-y: contain; }
+.builds-reveal-surface { clip-path: circle(var(--portal-radius) at 76% 68%); }
+.builds-cover-panel { transform: translateY(var(--cover-y,100%)); background: #30363b; will-change: transform; }
+.personal.builds-showcase .build-chapter { --project-bg: #1c1c1c; --project-text: #f1f0eb; --project-muted: #c3c3bd; --project-line: #ffffff30; background: var(--project-bg); color: var(--project-text); border: 0; border-radius: 32px; margin: 0; width: 100%; box-shadow: none; }
+.personal.builds-showcase .build-tone-light { --project-bg: #eeede7; --project-text: #191919; --project-muted: #4d4d46; --project-line: #19191930; }
+.personal.builds-showcase .build-tone-dark { --project-bg: #30363b; }
+.builds-showcase .build-card-header h3, .builds-showcase .build-copy h4, .builds-showcase .build-capabilities dt { color: var(--project-text); }
+.builds-showcase .build-label, .builds-showcase .build-copy > p, .builds-showcase .build-capabilities dd, .builds-showcase .build-details summary, .builds-showcase .technical-details li, .builds-showcase .details-stack { color: var(--project-muted); }
+.builds-showcase .build-details summary { border-color: var(--project-line); }
+.builds-showcase .build-details summary::after { color: var(--project-text); }
+.builds-showcase .project-visit { border-color: var(--project-line); color: var(--project-text); }
+.builds-showcase .build-tone-light .build-visual { background: #deded7; border-color: #19191915; }
+.builds-project-panel .build-chapter { position: relative; top: auto; height: 100%; min-height: 100%; transform: none; padding: 26px 4vw; display: flex; flex-direction: column; justify-content: center; }
+.builds-project-panel .build-chapter:has(details[open]) { height: auto; }
+.builds-project-panel .build-card-header { margin-bottom: 24px; }
+.builds-project-panel .build-card-header h3 { font-size: clamp(3rem,5vw,5rem); }
+.builds-project-panel .build-card-body { grid-template-columns: minmax(0,.85fr) minmax(0,1.15fr); gap: 4vw; }
+.builds-project-panel .build-visual { padding: 12px; }
+.builds-project-panel .build-details { margin-top: 24px; }
+.builds-project-panel .commerce-diagram { padding-top: 6px; padding-bottom: 6px; }
+.builds-static .builds-opening { min-height: 52svh; }
+.builds-static-list { margin: 0; }
+.builds-static-list .build-chapter { position: relative; top: auto; transform: none; margin: 0; min-height: calc(100svh - 60px); padding: 32px 5vw; }
+@media (max-width: 600px) {
+  .personal.builds-showcase { border-radius: 28px 28px 0 0; }
+  .builds-opening { padding: 48px 6vw; }
+  .builds-opening h2 { font-size: 20vw; line-height: .95; }
+  .builds-opening-copy { font-size: 1rem; margin-top: 24px; }
+  .builds-overline { font-size: .8125rem; margin-bottom: 24px; }
+  .builds-static .builds-opening { min-height: 48svh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .builds-static .builds-opening { min-height: auto; padding-top: 64px; padding-bottom: 48px; }
+}

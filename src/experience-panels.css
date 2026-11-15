@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;1,400;1,500&display=swap');
+
+:root { --serif: 'Lora', Georgia, serif; --sans: 'DM Sans', Arial, sans-serif; }
+body { font-family: var(--sans); }
+h1, h2, h3 { font-family: var(--serif); font-weight: 400; }
+.hero-introduction h1, .opening-name { letter-spacing: -.055em; }
+.project-section-heading h2, .impact-heading h2 { letter-spacing: -.045em; }
+.skill-heading h3, .role-projects-heading h3 { font-family: var(--serif); }
+.profiles-title { font-family: var(--serif); }
+.profile-row h3 { font-family: var(--sans); }
+
+/* Black surfaces with generous, rounded shoulders from experience onward. */
+main > .experience, main > .personal, main > .skills, main > .profiles, main > .contact {
+  border-radius: clamp(32px,5vw,76px) clamp(32px,5vw,76px) 0 0;
+  border-top: 1px solid rgba(240,238,231,.12);
+  margin-top: 24px;
+  background-color: #101012;
+}
+main > .personal, main > .profiles { background-color: #0b0b0e; }
+.experience.dark-surface { overflow: clip; }
+.experience::after, .personal::after, .skills::after, .profiles::after, .contact::after { border-radius: inherit; }
+.experience > .light-strip, .personal > .light-strip, .skills > .light-strip, .profiles > .light-strip, .contact > .light-strip { left: 6%; right: 6%; }
+
+.experience-case { margin-bottom: 44px; }
+.experience-scroll-track { --panel-progress: 0; --label-width: 34%; position: relative; height: 180svh; }
+.experience-pin { position: sticky; top: 5svh; padding: 2svh 0; }
+.experience-panels { display: grid; grid-template-columns: var(--label-width) minmax(0,1fr); gap: calc(18px * (1 - var(--panel-progress))); min-height: 78svh; }
+.experience-label { min-width: 0; border: 1px solid rgba(240,238,231,.21); border-radius: 38px; overflow: hidden; opacity: max(0,calc(1 - var(--panel-progress) * 1.7)); }
+.experience-label-inner { width: 350px; max-width: 30vw; height: 100%; padding: 38px 28px; display: flex; flex-direction: column; transform: translateX(calc(var(--panel-progress) * -30px)); }
+.case-number { color: #bdb7bf; font: .875rem/1.5 var(--sans); }
+.experience-label h3 { margin: 55px 0 24px; font: 400 clamp(1.9rem,3.5vw,3.5rem)/1.15 var(--serif); letter-spacing: -.045em; overflow-wrap: normal; }
+.experience-label p { color: #bcb5c0; font-size: 1.0625rem; }
+.case-scroll { margin-top: auto; padding-top: 50px; font: .875rem/1.5 var(--sans); color: #bcb5c0; display: flex; align-items: center; gap: 18px; }
+.case-scroll > span { color: var(--matrix-soft); font-size: 1.5rem; }
+.experience-contribution { min-width: 0; position: relative; display: flex; flex-direction: column; justify-content: center; padding: clamp(28px,3.5vw,52px); background: radial-gradient(ellipse at 100% 0, rgba(237,57,72,.055), transparent 55%), #18181c; border: 1px solid rgba(240,238,231,.12); border-radius: 38px; }
+.contribution-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.contribution-title .eyebrow { color: #c9c2cc; font-family: var(--sans); text-transform: none; letter-spacing: 0; margin: 0; }
+.contribution-title > span { color: var(--matrix-soft); font-size: .875rem; }
+.contribution-project { margin: 16px 0 8px; font-size: .94rem; color: var(--matrix-soft); }
+.experience-contribution h3 { margin: 8px 0 16px; max-width: 23ch; font: 400 clamp(1.9rem,3.1vw,3rem)/1.2 var(--serif); letter-spacing: -.035em; text-wrap: balance; }
+.contribution-context { margin: 0 0 24px; color: #c9c2cc; font-size: 1.0625rem; line-height: 1.7; }
+.experience-contribution ul { list-style: none; padding: 0; margin: 0; max-width: 68ch; }
+.experience-contribution li { position: relative; margin: 0; padding: 12px 0 12px 25px; font-size: 1.125rem; line-height: 1.7; color: #e1dce5; border-top: 1px solid rgba(240,238,231,.1); }
+.experience-contribution li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--matrix-soft); position: absolute; left: 0; top: 26px; }
+.contribution-stack { max-width: 68ch; font-size: .94rem; line-height: 1.8; color: #bdb6c2; margin: 22px 0 0; }
+.case-light { position: absolute; bottom: 0; left: 38px; right: 38px; height: 1px; overflow: hidden; background: #3b242b; }
+.case-light i { display: block; height: 100%; background: #f45b6d; box-shadow: 0 0 12px #f45b6d; transform: scaleX(var(--panel-progress)); transform-origin: left; }
+.case-details { margin: 20px 0 0; }
+.case-details summary { padding: 20px 6px; }
+
+@media (max-width: 900px) {
+  .experience-scroll-track { height: 165svh; }
+  .experience-panels { min-height: 76svh; }
+  .experience-label, .experience-contribution { border-radius: 26px; }
+  .experience-label-inner { max-width: none; width: 27vw; padding: 28px 14px; }
+  .experience-label h3 { font-size: clamp(1.35rem,3vw,2.3rem); margin-top: 38px; }
+  .experience-label p, .case-number, .case-scroll { font-size: .8rem; }
+  .experience-contribution { padding: 26px; }
+  .experience-contribution h3 { font-size: 1.9rem; }
+  .experience-contribution li { font-size: 1rem; }
+}
+@media (max-width: 600px) {
+  main > .experience, main > .personal, main > .skills, main > .profiles, main > .contact { margin-top: 16px; border-radius: 32px 32px 0 0; }
+  .experience-scroll-track { height: 175svh; }
+  .experience-pin { top: 2svh; padding: 8px 0; }
+  .experience-panels { gap: calc(8px * (1 - var(--panel-progress))); min-height: 82svh; }
+  .experience-label-inner { width: 26vw; padding: 24px 10px; }
+  .experience-label h3 { font-size: 1.2rem; overflow-wrap: anywhere; }
+  .case-number { font-size: .7rem; }
+  .case-scroll { flex-direction: column; align-items: start; font-size: .75rem; gap: 4px; }
+  .experience-label p { font-size: .8rem; }
+  .experience-contribution { padding: 24px 18px; }
+  .contribution-title .eyebrow { font-size: .8rem; }
+  .experience-contribution h3 { font-size: clamp(1.45rem,5vw,1.8rem); line-height: 1.25; }
+  .contribution-context { font-size: .94rem; margin-bottom: 14px; }
+  .experience-contribution li { padding: 10px 0 10px 16px; font-size: .94rem; line-height: 1.65; }
+  .experience-contribution li::before { top: 21px; width: 4px; height: 4px; }
+  .contribution-stack { font-size: .875rem; margin-top: 14px; }
+  .contribution-project { font-size: .875rem; }
+}
+@media (max-height: 650px), (prefers-reduced-motion: reduce) {
+  .experience-scroll-track { height: auto; --label-width: 0% !important; --panel-progress: 1 !important; }
+  .experience-pin { position: relative; top: auto; }
+  .experience-panels { min-height: auto; }
+  .experience-contribution { padding-top: 32px; padding-bottom: 32px; }
+  .experience-label { visibility: hidden; }
+}
