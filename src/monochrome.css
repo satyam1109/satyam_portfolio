@@ -34,16 +34,26 @@ main > .experience { background: #151515; }
 main > .personal { background: #080808; }
 main > .skills { background: #1b1b1b; }
 main > .profiles { background: #101010; }
-main > .contact { background: #202020; }
+main > .contact {
+  --cream: #191919;
+  --muted: #50504b;
+  --matrix: #50504b;
+  --matrix-soft: #45453f;
+  --line: #19191933;
+  background: #f2f1ed;
+  color-scheme: light;
+}
+.contact.dark-surface::after { background-image: radial-gradient(circle,#19191940 1px,transparent 1.2px); }
 .timeline-line { background: linear-gradient(#d3d3ce,transparent); }
 .timeline-line::before { box-shadow: none; }
 .certificate-thumb:hover, .certificate-thumb:focus-visible { box-shadow: 0 12px 30px #0006; }
 .skill-item:hover svg { filter: none; }
 .profile-row:not(.has-preview)::before { background: #272727; border-left: 1px solid #deded9; }
 .profile-row:hover .profile-number { color: #deded9; }
-.contact-form label:focus-within { border-color: #ddd; box-shadow: none; }
-.contact-form button { background: #eee; color: #111; box-shadow: none; border-radius: 12px; }
-.contact-form button:hover { background: #fff; color: #111; box-shadow: none; }
+.contact-form input::placeholder, .contact-form textarea::placeholder { color: #686862; }
+.contact-form label:focus-within { border-color: #50504b; box-shadow: none; }
+.contact-form button { background: #191919; color: #f2f1ed; box-shadow: none; border-radius: 12px; }
+.contact-form button:hover { background: #393934; color: #f2f1ed; box-shadow: none; }
 .contact-form button:disabled { opacity: .6; }
 .experience-scroll-track { height: 195svh; overflow-anchor: none; }
 .experience-pin { top: 88px; }
